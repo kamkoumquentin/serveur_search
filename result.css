@@ -1,0 +1,54 @@
+
+.produit{
+width: 98%;
+display: flex;
+background-color: whitesmoke;
+ border-radius: 10px 10px 10px 10px;
+}
+
+.produit:hover{
+
+    box-shadow: 2px 2px 10px black;  
+    
+
+}
+
+.representation{
+
+width: 10em;
+height: 10em;
+margin-right: 1em;
+border-radius: 10px 0 0 10px;
+}
+
+.titre{
+    margin: 0;
+}
+
+.auteur{
+    margin: 5px 0;
+}
+
+.description{
+    margin: 1em 0 0 0;
+}
+
+.bouton3{
+    margin: 5px 0;
+    height: 2em;
+   
+    position: relative;
+}
+
+
+.corps_result{
+    flex: 1;
+    background-color: whitesmoke;
+    border-radius: 0 10px 10px 0;
+}
+
+button{
+
+height: 100%;
+
+}

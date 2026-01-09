@@ -1,0 +1,57 @@
+.book-result {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: box-shadow 0.3s;
+}
+
+.book-result:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.book-cover {
+  width: 120px;
+  height: 180px;
+  object-fit: cover;
+  margin-right: 20px;
+  border-radius: 4px;
+}
+
+.book-info {
+  max-width: 600px;
+}
+
+.book-title {
+  font-size: 1.4em;
+  margin: 0;
+  color: #333;
+}
+
+.book-author {
+  font-size: 1em;
+  color: #777;
+  margin: 5px 0;
+}
+
+.book-description {
+  font-size: 0.95em;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.book-download {
+  text-decoration: none;
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.book-download:hover {
+  background-color: #45a049;
+}
