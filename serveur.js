@@ -24,7 +24,7 @@ const multer=require('multer');
    database :process.env.DB_NAME,
    ssl: {
     rejectUnauthorized: true, // INDISPENSABLE pour Aiven
-    ca: fs.readFileSync(path.join(__dirname, "ca.pem"))
+  
   },
     waitForConnections: true,
     connectionLimit: 10,
