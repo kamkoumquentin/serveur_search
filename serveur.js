@@ -23,7 +23,8 @@ const multer=require('multer');
    
    database :process.env.DB_NAME,
    ssl: {
-    rejectUnauthorized: false // INDISPENSABLE pour Aiven
+    rejectUnauthorized: true, // INDISPENSABLE pour Aiven
+    ca: fs.readFileSync(path.join(__dirname, "ca.pem"))
   },
     waitForConnections: true,
     connectionLimit: 10,
@@ -115,14 +116,14 @@ const multer=require('multer');
 
               try{
                
-      var y=   await pool.promise().execute('insert into cours (nom,description,lien,auteur) values (?,?,?,?) ',[req.body.nom,req.body.description,req.body.lien,req.body.auteur]);
+      var y= await pool.promise().execute('insert into cours (nom,description,lien,auteur) values (?,?,?,?) ',[req.body.nom,req.body.description,req.body.lien,req.body.auteur]);
            console.dir(req.body.nom);     
          rep.status(200).json({});
 
               
             }catch(e){
                console.log("erreur "+e);
-               
+                 rep.status(500).json({ error: e.message });
               }
 
  });
