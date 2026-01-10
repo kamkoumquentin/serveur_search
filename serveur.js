@@ -8,6 +8,11 @@ const path = require('path');
 
   require('dotenv').config();
 
+const imageDir = path.join(__dirname, "image");
+if (!fs.existsSync(imageDir)) {
+  fs.mkdirSync(imageDir);
+}
+
 const multer=require('multer');
 
 
@@ -173,8 +178,9 @@ const multer=require('multer');
 
  console.log(path.basename(req.file.path))
  console.log(req.file);
+      const fileName = path.basename(req.file.path);
 
-    rep.status(200).json({path:"http://localhost:8080/image/"+path.basename(req.file.path)});
+    rep.status(200).json({path:`${req.protocol}://${req.get("host")}/image/${fileName}`});
 
 
   });
