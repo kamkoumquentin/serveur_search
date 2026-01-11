@@ -153,7 +153,7 @@ const multer=require('multer');
  app.use("/image",express.static(path.join(__dirname,'image')));
  
 
-  const stockage = multer.diskStorage({
+/*  const stockage = multer.diskStorage({
 
      destination : (req,rep ,cb)=>{
 
@@ -170,6 +170,7 @@ const multer=require('multer');
   });
 
   const charger=multer({storage: stockage})
+*/
 
 
 
