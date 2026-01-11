@@ -2,8 +2,7 @@ var axios=  require('axios')
 var express= require('express');
 var cors =require('cors');
 var mysql=require('mysql2');
-const { Links } = require('react-router-dom');
-var fs=require('fs');
+
 const path = require('path');
 
 const cloudinary = require('cloudinary').v2;
@@ -11,10 +10,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
   require('dotenv').config();
 
-const imageDir = path.join(__dirname, "image");
-if (!fs.existsSync(imageDir)) {
-  fs.mkdirSync(imageDir);
-}
+
 
 const multer=require('multer');
 
@@ -156,24 +152,6 @@ const multer=require('multer');
  app.use("/image",express.static(path.join(__dirname,'image')));
  
 
-/*  const stockage = multer.diskStorage({
-
-     destination : (req,rep ,cb)=>{
-
-          cb(null,path.join(__dirname,'image'));
-
-     },
-
-     filename :(req,file,cb)=>{
-
-      cb(null,file.originalname);
-
-     }
-
-  });
-
-  const charger=multer({storage: stockage})
-*/
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
