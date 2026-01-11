@@ -6,6 +6,9 @@ const { Links } = require('react-router-dom');
 var fs=require('fs');
 const path = require('path');
 
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
   require('dotenv').config();
 
 const imageDir = path.join(__dirname, "image");
@@ -172,6 +175,22 @@ const multer=require('multer');
   const charger=multer({storage: stockage})
 */
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Configuration du stockage permanent
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'cours_uploads', // Nom du dossier sur Cloudinary
+    resource_type: 'auto',   // Permet d'accepter PDF, images, etc.
+  },
+});
+
+const charger = multer({ storage: storage });
 
 
 
@@ -179,9 +198,8 @@ const multer=require('multer');
 
  console.log(path.basename(req.file.path))
  console.log(req.file);
-      const fileName = path.basename(req.file.path);
-
-    rep.status(200).json({path:`${req.protocol}://${req.get("host")}/image/${fileName}`});
+     
+    rep.status(200).json({path:req.file.path});
 
 
   });
