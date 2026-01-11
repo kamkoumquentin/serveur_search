@@ -196,10 +196,23 @@ const charger = multer({ storage: storage });
 
   app.post('/gestion',charger.single("lien"),(req,rep)=>{
 
- console.log(req.file.path)
- console.log(req.file);
+ try {
+        // Vérification si le fichier existe
+        if (!req.file) {
+            console.log("Fichier non reçu par le serveur");
+            return rep.status(400).json({ error: "Aucun fichier reçu" });
+        }
+
+        // Si le fichier est là, on renvoie le chemin
+        console.log("Fichier reçu :", req.file.path);
+        rep.status(200).json({ path: req.file.path });
+
+    } catch (e) {
+        console.error("Erreur Cloudinary ou Multer :", e);
+        rep.status(500).json({ error: "Échec de l'upload vers Cloudinary" });
+    }
      
-    rep.status(200).json({path:req.file.path});
+   
 
 
   });
