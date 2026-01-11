@@ -196,7 +196,7 @@ const charger = multer({ storage: storage });
 
   app.post('/gestion',charger.single("lien"),(req,rep)=>{
 
- console.log(path.basename(req.file.path))
+ console.log(req.file.path)
  console.log(req.file);
      
     rep.status(200).json({path:req.file.path});
@@ -205,13 +205,6 @@ const charger = multer({ storage: storage });
   });
 
 
-app.get('/telecharger/:file', (req, res) => {
-  
- var lien= path.join(__dirname,"image",path.basename(req.params.file));
-  res.download(lien,path.basename(req.params.file),()=>{
-   
-  });
-});
 
 
 
