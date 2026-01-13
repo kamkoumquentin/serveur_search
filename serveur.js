@@ -174,6 +174,8 @@ const charger = multer({ storage: storage });
 
   app.post('/gestion',charger.single("lien"),(req,rep)=>{
 
+    console.log("--- Requête d'upload reçue ! ---");
+
  try {
         // Vérification si le fichier existe
         if (!req.file) {
