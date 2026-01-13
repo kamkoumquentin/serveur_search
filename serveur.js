@@ -175,7 +175,7 @@ const storage = new CloudinaryStorage({
 const charger = multer({ storage: storage });
 
 
-
+/*
   app.post('/gestion',charger.single("lien"),(req,rep)=>{
 
     console.log("--- Requête d'upload reçue ! ---");
@@ -203,7 +203,10 @@ const charger = multer({ storage: storage });
 
   });
 
-
+*/
+app.post('/gestion', (req, res) => {
+   res.status(200).json({ message: "Le serveur répond bien !" });
+});
 
 
 
