@@ -204,8 +204,28 @@ const charger = multer({ storage: storage });
   });
 
 */
-app.post('/gestion', (req, res) => {
-   res.status(200).json({ message: "Le serveur répond bien !" });
+app.post('/gestion', (req, rep) => {
+    console.log("--- Tentative d'upload reçue ---");
+
+    // On appelle multer manuellement pour capturer les erreurs proprement
+    charger.single("lien")(req, rep, (err) => {
+        if (err) {
+            console.error("Erreur Multer/Cloudinary détaillée:", err);
+            return rep.status(500).json({ 
+                error: "Erreur lors de l'envoi à Cloudinary", 
+                details: err.message 
+            });
+        }
+
+        if (!req.file) {
+            console.log("Le fichier n'est pas arrivé jusqu'au serveur.");
+            return rep.status(400).json({ error: "Aucun fichier reçu ou format non supporté." });
+        }
+
+        // Si tout est ok
+        console.log("Upload réussi ! URL :", req.file.path);
+        return rep.status(200).json({ path: req.file.path });
+    });
 });
 
 
