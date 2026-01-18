@@ -99,7 +99,7 @@ const multer=require('multer');
 
  app.get('/envoi/:id',async (req,rep)=>{
    
- var [ligne,_]= await pool.promise().execute('select *from cours where nom COLLATE utf8mb4_unicode_520_ci like ?  or auteur  COLLATE utf8mb4_unicode_520_ci  like ?',["%"+req.params.id+"%","%"+req.params.id+"%"]);
+ var [ligne,_]= await pool.promise().execute('select *from cours where nom like ?  or auteur like ?',["%"+req.params.id+"%","%"+req.params.id+"%"]);
                    console.log("resultat obtenu");
          rep.json(ligne);
  })
