@@ -77,6 +77,22 @@ const multer=require('multer');
  }
  });
 
+  app.get("/affichage_t/",async (req,rep)=>{
+
+        var [ligne ,_]=await pool.promise().execute("select * from temp_cours");
+
+           if(ligne &&  Array.isArray(ligne)){
+
+              console.dir(ligne);
+              
+              rep.json(ligne);
+ }
+ });
+
+
+
+
+
 
  app.get("/af/:id",async (req,rep)=>{
 
