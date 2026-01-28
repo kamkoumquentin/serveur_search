@@ -182,6 +182,9 @@ const multer=require('multer');
 
 
 
+
+
+
  app.use("/image",express.static(path.join(__dirname,'image')));
  
 
