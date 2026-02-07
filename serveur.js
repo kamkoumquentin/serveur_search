@@ -113,6 +113,27 @@ const multer=require('multer');
  });
 
 
+app.get("/af1/:id",async (req,rep)=>{
+
+        var [ligne ,_]=await pool.promise().execute("select * from temp_cours where id=?",[req.params.id]);
+
+           if(ligne &&  Array.isArray(ligne)){
+
+              console.dir(ligne);
+              
+              rep.json(ligne);
+             }
+             else{
+               console.log("erreur");
+               
+             }         
+ });
+
+
+
+
+
+
  app.get('/envoi/:id',async (req,rep)=>{
    
  var [ligne,_]= await pool.promise().execute('select *from cours where nom COLLATE utf8mb4_general_ci like ?  or auteur COLLATE utf8mb4_general_ci like ?',["%"+req.params.id+"%","%"+req.params.id+"%"]);
