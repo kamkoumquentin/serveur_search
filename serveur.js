@@ -219,7 +219,7 @@ const multer=require('multer');
  console.log(path.basename(req.file.path))
  console.log(req.file);
 
-    rep.status(200).json({path:"http://localhost:8080/image/"+path.basename(req.file.path)});
+    rep.status(200).json({path:path.basename(req.file.path)});
 
 
   });
