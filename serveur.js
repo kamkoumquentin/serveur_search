@@ -2,11 +2,15 @@ var axios=  require('axios')
 var express= require('express');
 var cors =require('cors');
 var mysql=require('mysql2');
-const { Links } = require('react-router-dom');
-var fs=require('fs');
+
 const path = require('path');
 
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
   require('dotenv').config();
+
+
 
 const multer=require('multer');
 
@@ -23,7 +27,8 @@ const multer=require('multer');
    
    database :process.env.DB_NAME,
    ssl: {
-    rejectUnauthorized: false // INDISPENSABLE pour Aiven
+    rejectUnauthorized: true, // INDISPENSABLE pour Aiven
+  
   },
     waitForConnections: true,
     connectionLimit: 10,
@@ -72,8 +77,7 @@ const multer=require('multer');
  }
  });
 
-
- app.get("/affichage_t/",async (req,rep)=>{
+  app.get("/affichage_t/",async (req,rep)=>{
 
         var [ligne ,_]=await pool.promise().execute("select * from temp_cours");
 
@@ -111,7 +115,7 @@ const multer=require('multer');
 
  app.get('/envoi/:id',async (req,rep)=>{
    
- var [ligne,_]= await pool.promise().execute('select *from cours where nom like ?  or auteur like ?',["%"+req.params.id+"%","%"+req.params.id+"%"]);
+ var [ligne,_]= await pool.promise().execute('select *from cours where nom COLLATE utf8mb4_general_ci like ?  or auteur COLLATE utf8mb4_general_ci like ?',["%"+req.params.id+"%","%"+req.params.id+"%"]);
                    console.log("resultat obtenu");
          rep.json(ligne);
  })
@@ -132,30 +136,31 @@ const multer=require('multer');
 
               try{
                
-      var y=   await pool.promise().execute('insert into cours (nom,description,lien,auteur) values (?,?,?,?) ',[req.body.nom,req.body.description,req.body.lien,req.body.auteur]);
+      var y= await pool.promise().execute('insert into cours (nom,description,lien,auteur) values (?,?,?,?) ',[req.body.nom,req.body.description,req.body.lien,req.body.auteur]);
            console.dir(req.body.nom);     
          rep.status(200).json({});
 
               
             }catch(e){
                console.log("erreur "+e);
-               
+                 rep.status(500).json({ error: e.message });
               }
 
  });
 
- app.post("/ajouter_t",async (req,rep)=>{
+
+  app.post("/ajouter_t",async (req,rep)=>{
 
               try{
                
-      var y=   await pool.promise().execute('insert into temp_cours (nom,description,lien,auteur) values (?,?,?,?) ',[req.body.nom,req.body.description,req.body.lien,req.body.auteur]);
+      var y= await pool.promise().execute('insert into temp_cours (nom,description,lien,auteur) values (?,?,?,?) ',[req.body.nom,req.body.description,req.body.lien,req.body.auteur]);
            console.dir(req.body.nom);     
          rep.status(200).json({});
 
               
             }catch(e){
                console.log("erreur "+e);
-               
+                 rep.status(500).json({ error: e.message });
               }
 
  });
@@ -175,7 +180,7 @@ const multer=require('multer');
 
  });
 
-
+ 
   app.post('/supprimer_t',async (req,rep)=>{
 
               try{
@@ -190,47 +195,57 @@ const multer=require('multer');
  });
 
 
+
+
+
  app.use("/image",express.static(path.join(__dirname,'image')));
  
 
-  const stockage = multer.diskStorage({
 
-     destination : (req,rep ,cb)=>{
+try {
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+} catch (err) {
+    console.error("ERREUR CONFIG CLOUDINARY:", err);
+}
 
-          cb(null,path.join(__dirname,'image'));
+// Configuration du stockage permanent
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'cours_uploads', // Nom du dossier sur Cloudinary
+    resource_type: 'auto',   // Permet d'accepter PDF, images, etc.
+  },
+});
 
-     },
-
-     filename :(req,file,cb)=>{
-
-      cb(null,file.originalname);
-
-     }
-
-  });
-
-  const charger=multer({storage: stockage})
-
-
-
-
-  app.post('/gestion',charger.single("lien"),(req,rep)=>{
-
- console.log(path.basename(req.file.path))
- console.log(req.file);
-
-    rep.status(200).json({path:"http://localhost:8080/image/"+path.basename(req.file.path)});
+const charger = multer({ storage: storage });
 
 
-  });
+app.post('/gestion', (req, rep) => {
+    console.log("--- Tentative d'upload reçue ---");
 
+    // On appelle multer manuellement pour capturer les erreurs proprement
+    charger.single("lien")(req, rep, (err) => {
+        if (err) {
+            console.error("Erreur Multer/Cloudinary détaillée:", err);
+            return rep.status(500).json({ 
+                error: "Erreur lors de l'envoi à Cloudinary", 
+                details: err.message 
+            });
+        }
 
-app.get('/telecharger/:file', (req, res) => {
-  
- var lien= path.join(__dirname,"image",path.basename(req.params.file));
-  res.download(lien,path.basename(req.params.file),()=>{
-   
-  });
+        if (!req.file) {
+            console.log("Le fichier n'est pas arrivé jusqu'au serveur.");
+            return rep.status(400).json({ error: "Aucun fichier reçu ou format non supporté." });
+        }
+
+        // Si tout est ok
+        console.log("Upload réussi ! URL :", req.file.path);
+        return rep.status(200).json({ path: req.file.path });
+    });
 });
 
 
