@@ -144,6 +144,22 @@ const multer=require('multer');
 
  });
 
+ app.post("/ajouter_t",async (req,rep)=>{
+
+              try{
+               
+      var y=   await pool.promise().execute('insert into temp_cours (nom,description,lien,auteur) values (?,?,?,?) ',[req.body.nom,req.body.description,req.body.lien,req.body.auteur]);
+           console.dir(req.body.nom);     
+         rep.status(200).json({});
+
+              
+            }catch(e){
+               console.log("erreur "+e);
+               
+              }
+
+ });
+
 
 
  app.post('/supprimer',async (req,rep)=>{
